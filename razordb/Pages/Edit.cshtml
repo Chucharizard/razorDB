@@ -2,49 +2,84 @@
 @model razordb.Pages.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Tarea";
 }
 
-<h1>Edit</h1>
-
-<h4>Tarea</h4>
+<h1>Editar Tarea</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Tarea.Id" />
-            <div class="form-group">
-                <label asp-for="Tarea.nombreTarea" class="control-label"></label>
-                <input asp-for="Tarea.nombreTarea" class="form-control" />
-                <span asp-validation-for="Tarea.nombreTarea" class="text-danger"></span>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Tarea.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Tarea.nombreTarea" class="form-label"></label>
+                        <input asp-for="Tarea.nombreTarea" class="form-control" minlength="3" required />
+                        <span asp-validation-for="Tarea.nombreTarea" class="text-danger"></span>
+                        <small class="form-text text-muted">Mínimo 3 caracteres</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tarea.fechaVencimiento" class="form-label"></label>
+                        <input asp-for="Tarea.fechaVencimiento" class="form-control" type="datetime-local" required />
+                        <span asp-validation-for="Tarea.fechaVencimiento" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tarea.estado" class="form-label"></label>
+                        <select asp-for="Tarea.estado" class="form-select" required>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Curso">En Curso</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                        <span asp-validation-for="Tarea.estado" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tarea.idUsuario" class="form-label"></label>
+                        <select asp-for="Tarea.idUsuario" class="form-select" required>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <option value="@i">Usuario @i</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Tarea.idUsuario" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                        <a asp-page="./Index" class="btn btn-secondary">Volver a la lista</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Tarea.fechaVencimiento" class="control-label"></label>
-                <input asp-for="Tarea.fechaVencimiento" class="form-control" />
-                <span asp-validation-for="Tarea.fechaVencimiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tarea.estado" class="control-label"></label>
-                <input asp-for="Tarea.estado" class="form-control" />
-                <span asp-validation-for="Tarea.estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tarea.idUsuario" class="control-label"></label>
-                <input asp-for="Tarea.idUsuario" class="form-control" />
-                <span asp-validation-for="Tarea.idUsuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        $(document).ready(function() {
+            var fechaStr = $("#Tarea_fechaVencimiento").val();
+            if (fechaStr) {
+                var fecha = new Date(fechaStr);
+                if (!isNaN(fecha)) {
+                    var year = fecha.getFullYear();
+                    var month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                    var day = fecha.getDate().toString().padStart(2, '0');
+                    var hours = fecha.getHours().toString().padStart(2, '0');
+                    var minutes = fecha.getMinutes().toString().padStart(2, '0');
+
+                    $("#Tarea_fechaVencimiento").val(`${year}-${month}-${day}T${hours}:${minutes}`);
+                }
+            }
+        });
+    </script>
 }

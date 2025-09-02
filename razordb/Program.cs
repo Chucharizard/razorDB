@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using razordb.Data;
+using razordb.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,13 @@ builder.Services.AddDbContext<razordb.Data.TareaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<TareaDbContext>();
+    TareaSeeder.SeedData(context);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
